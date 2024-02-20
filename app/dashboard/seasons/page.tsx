@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchSeasons } from '@/app/lib/data';
 import { lusitana } from '@/app/ui/fonts';
+import { getSession } from 'next-auth/react';
 
 interface Season {
   seasonId: number;
@@ -14,7 +14,8 @@ export default function Page() {
 
   useEffect(() => {
     async function getSeasons() {
-      const data = await fetchSeasons();
+      const session = await getSession();
+      const data = await fetchSeasons(session);
       setSeasons(data);
     }
     getSeasons();
@@ -34,4 +35,18 @@ export default function Page() {
       </div>
     </main>
   );
+}
+
+export async function fetchSeasons(sessionData: any) {
+  console.log(sessionData);
+
+  console.log('Fetching seasons data...');
+  const response = await fetch('https://localhost:44367/seasons', {
+    headers: {
+      Authorization: `Bearer ${sessionData?.user?.accessToken}`,
+    },
+  });
+  const data = await response.json();
+  console.log('Seasons data:', data);
+  return data;
 }
