@@ -41,9 +41,10 @@ export async function fetchSeasons(sessionData: any) {
   console.log(sessionData);
 
   console.log('Fetching seasons data...');
+  console.log(`With JWT: ${sessionData?.user?.jwt}`)
   const response = await fetch('https://localhost:44367/seasons', {
     headers: {
-      Authorization: `Bearer ${sessionData?.user?.accessToken}`,
+      Authorization: `Bearer ${sessionData?.user?.jwt}`,
     },
   });
   const data = await response.json();

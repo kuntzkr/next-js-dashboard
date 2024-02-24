@@ -1,6 +1,19 @@
 import NextAuth from "next-auth/next";
 import GoogleProvider from "next-auth/providers/google"
 
+function generateJwt(userInfo: any) {
+    const jwt = require('jsonwebtoken')
+
+    const payload = {
+        email: userInfo.email,
+    }
+
+    const secret = 'super-secret-code'
+    const jwtToken = jwt.sign(payload, secret, { expiresIn: '2h'})
+
+    return jwtToken;
+}
+
 const handler = NextAuth({
     providers:[
         GoogleProvider({
@@ -20,7 +33,10 @@ const handler = NextAuth({
                 const userInfo = await response.json();                
                 console.log("UserInfo: " + JSON.stringify(userInfo, null, 2));
 
+                const jwt = generateJwt(userInfo);
+
                 token.accessToken = account.access_token;
+                token.jwt = jwt;
             }
             // console.log("Token: " + token.accessToken)
             return token;
@@ -29,6 +45,7 @@ const handler = NextAuth({
             // Send properties to the client, like an access_token and user id from a provider.
             session.user.accessToken = token.accessToken as string
             session.user.id = token.id as number
+            session.user.jwt = token.jwt as string
             
             return session
         },

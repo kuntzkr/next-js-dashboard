@@ -11,6 +11,17 @@ declare module "next-auth" {
       zip: string;
       role: string;
       accessToken: string;
+      jwt: string;
+    };
+  }
+}
+
+declare module "next-auth" {
+  interface token {
+    user: {
+      id: number;
+      accessToken: string,
+      jwt: string,
     };
   }
 }
